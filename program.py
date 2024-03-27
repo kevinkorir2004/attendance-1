@@ -27,6 +27,11 @@ with open(full_students_path, "r") as infile:
     students = json.load(infile)
 
 
+def sort_attendance(student):
+    attendance_list = student["attendance"]
+    attendance_list.sort(key=lambda x: x["date"])
+    return student
+
 def name_or_id(input_string):
     if input_string.isnumeric():
         return 'id'
@@ -51,6 +56,22 @@ def date_format_verification(date_string):
             if int(date_list[2]) > 30:
                 return False
     return True
+
+
+def is_date_present(date_string, student):
+    for day in student["attendance"]:
+        if day["date"] == date_string:
+            return True
+    return False
+
+def classes_until_fail(student):
+    sum = 0
+    for day in student['attendance']:
+        if day['status'] == 'absent':
+            sum += 1
+    return MIN_CLASSES_TO_MISS - sum
+
+
 
 def print_single_student_name(student):
     total_indent = 10
@@ -89,14 +110,6 @@ def print_actions(actions_list):
     for i in range(len(actions_list)):
         print(f"{str(i+1)}. {actions_list[i]}")
 
-def fail_check(students_list):
-    for student in students_list:
-        sum = 0
-        for day in student['attendance']:
-            if day['status'] == 'absent':
-                sum += 1
-        if sum > MIN_CLASSES_TO_MISS:
-            student['fail'] = True
 
 def find_student(students_list):
     while True:
@@ -129,8 +142,9 @@ def get_date():
 
 
 
+
 def take_attendance(students_list):
-    date_to_use = datetime.datetime.now().date()
+    date_to_use = str(datetime.datetime.now().date())
     print(date_to_use)
     print("Enter n to choose another date.")
     confirm_date = input("Do you want to take today's attendance? [y/n]: ")
@@ -139,11 +153,35 @@ def take_attendance(students_list):
     print()
     print("Enter p for present, and a for absent.")
     for student in students_list:
+        print_single_student_name(student)
+        classes_remaining = classes_until_fail(student)
+        if classes_remaining < 0:
+            print("Student failed.")
+        else:
+            print(f"Classes left before fail: {str(classes_remaining)}")
+        date_present = is_date_present(date_to_use, student)
+        if date_present:
+            print("Attendance already recorded.")
+            time.sleep(.3)
+            continue
         updated_attendance = False
         while not updated_attendance:
-            print_single_student_name(student)
-            current_status = input("[p/a]: ").strip()
-            updated_attendance = current_status.lower() in ACCEPTED_ATTENDANCE_STATUS
+            status_input = input("[p/a]: ").strip().lower()
+            updated_attendance = status_input in ACCEPTED_ATTENDANCE_STATUS
+        if status_input == 'p':
+            student_status = "present"
+        else:
+            student_status = "absent"
+        student["attendance"].append({
+            "date": date_to_use,
+            "status": student_status
+        })
+        student = sort_attendance(student)
+        classes_left = classes_until_fail(student)
+        if classes_left < 0:
+            student["fail"] = True
+    print()
+    return students_list
 
 def view_student_attendance(students_list):
     student = find_student(students_list)
@@ -167,15 +205,11 @@ while True:
         time.sleep(.8)
         continue
     elif action_id == 1:
-        take_attendance(students)
-        break
+        students = take_attendance(students)
+        with open(full_students_path, "w") as outfile:
+            students_string = json.dumps(students, indent=4)
+            outfile.write(students_string)
     elif action_id == 4:
         view_student_attendance(students)
-        break
     elif action_id == 6:
         break
-    break
-
-# with open(full_students_path, "w") as outfile:
-#     students_string = json.dumps(students, indent=4)
-#     outfile.write(students_string)
