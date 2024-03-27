@@ -1,0 +1,32 @@
+[
+    {
+        "id": 42069,
+        "name": "John Doe",
+        "fail": false,
+        "attendance": [
+            {
+                "date": "2024-03-25",
+                "status": "present"
+            },
+            {
+                "date": "2024-03-27",
+                "status": "absent"
+            }
+        ]
+    },
+    {
+        "id": 42073,
+        "name": "Jane Doreen",
+        "fail": false,
+        "attendance": [
+            {
+                "date": "2024-03-25",
+                "status": "present"
+            },
+            {
+                "date": "2024-03-27",
+                "status": "present"
+            }
+        ]
+    }
+]
