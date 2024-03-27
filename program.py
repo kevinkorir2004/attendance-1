@@ -76,7 +76,6 @@ def classes_until_fail(student):
 def print_single_student_name(student):
     total_indent = 10
     control_space = 3
-    print()
     print(student["id"], end='')
     space_between = total_indent - len(str(student["id"]))
     for i in range(max(space_between, control_space)):
@@ -84,15 +83,9 @@ def print_single_student_name(student):
     print(student["name"])
 
 def print_names(students_list):
-    total_indent = 10
-    control_space = 3
     print()
     for student in students_list:
-        print(student["id"], end='')
-        space_between = total_indent - len(str(student["id"]))
-        for i in range(max(space_between, control_space)):
-            print('.', end='')
-        print(student["name"])
+        print_single_student_name(student)
     print()
 
 def print_attendance(student):
@@ -153,6 +146,7 @@ def take_attendance(students_list):
     print()
     print("Enter p for present, and a for absent.")
     for student in students_list:
+        print()
         print_single_student_name(student)
         classes_remaining = classes_until_fail(student)
         if classes_remaining < 0:
