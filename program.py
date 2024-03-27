@@ -179,8 +179,3 @@ while True:
 # with open(full_students_path, "w") as outfile:
 #     students_string = json.dumps(students, indent=4)
 #     outfile.write(students_string)
-
-
-
-# date = datetime.datetime.now().date()
-# print(date)
