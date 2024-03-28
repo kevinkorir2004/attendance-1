@@ -177,11 +177,31 @@ def take_attendance(students_list):
     print()
     return students_list
 
+def add_student(students_list):
+    new_student = {}
+    id_is_numeric = False
+    while not id_is_numeric:
+        new_id_string = input("Id: ")
+        id_is_numeric = new_id_string.isnumeric()
+    name_is_numeric = True
+    while name_is_numeric:
+        new_name_string = input("Name: ")
+        name_is_numeric = new_name_string.isnumeric()
+    new_student["id"] = int(new_id_string)
+    new_student["name"] = new_name_string
+    new_student["fail"] = False
+    new_student["attendance"] = []
+    students_list.append(new_student)
+    return students_list
+
 def view_student_attendance(students_list):
     student = find_student(students_list)
     if student == None:
         return
     print_attendance(student)
+
+
+
 
 
 while True:
@@ -203,6 +223,8 @@ while True:
         with open(full_students_path, "w") as outfile:
             students_string = json.dumps(students, indent=4)
             outfile.write(students_string)
+    elif action_id == 2:
+        students = add_student(students)
     elif action_id == 4:
         view_student_attendance(students)
     elif action_id == 6:
