@@ -132,6 +132,13 @@ def get_date():
         date_accepted = date_confirmation.lower() in POSITIVE_CONFIRMATIONS
     return date_input
 
+def status_name(status):
+    if status == 'p':
+        student_status = "present"
+    else:
+        student_status = "absent"
+    return student_status
+
 
 
 
@@ -162,10 +169,7 @@ def take_attendance(students_list):
         while not updated_attendance:
             status_input = input("[p/a]: ").strip().lower()
             updated_attendance = status_input in ACCEPTED_ATTENDANCE_STATUS
-        if status_input == 'p':
-            student_status = "present"
-        else:
-            student_status = "absent"
+        student_status = status_name(status_input)
         student["attendance"].append({
             "date": date_to_use,
             "status": student_status
