@@ -203,6 +203,30 @@ def view_student_attendance(students_list):
     if student == None:
         return
     print_attendance(student)
+def edit_student_attendance(students_list):
+    student = find_student(students_list)
+    if student == None:
+        return
+
+    print("Enter the date you want to edit attendance for:")
+    date_to_edit = input("Write the date in yyyy-mm-dd format: ")
+    if not date_format_verification(date_to_edit):
+        print("Invalid date format.")
+        return
+
+    for day in student["attendance"]:
+        if day["date"] == date_to_edit:
+            print(f"The attendance for {student['name']} on {date_to_edit} is {day['status']}.")
+            new_status = input("Enter the new status (p for present, a for absent): ").strip().lower()
+            if new_status in ACCEPTED_ATTENDANCE_STATUS:
+                day["status"] = new_status
+                print("Attendance updated successfully.")
+            else:
+                print("Invalid status. Attendance not updated.")
+            return
+
+    print(f"No attendance record found for {student['name']} on {date_to_edit}.")
+
 
 
 
@@ -229,6 +253,8 @@ while True:
             outfile.write(students_string)
     elif action_id == 2:
         students = add_student(students)
+     elif action_id == 3:
+        edit_student_attendance(students)
     elif action_id == 4:
         view_student_attendance(students)
     elif action_id == 6:
